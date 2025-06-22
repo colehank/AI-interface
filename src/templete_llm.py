@@ -114,7 +114,6 @@ class TemplateLLM(BaseLLM):
             k: v for k, v in kwargs.items() if k in self.variables
         }
         messages = self._fill(**template_vars)
-        print(f'Prompt messages: {messages}')
         non_template_kwargs = {
             k: v for k, v in kwargs.items() if k not in self.variables
         }
