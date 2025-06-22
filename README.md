@@ -29,7 +29,7 @@ OPENAI_BASE_URL=api endpoint
 ### Basic LLM Call
 
 ```python
-from src import BaseLLM
+from ai_interface import BaseLLM
 
 llm = BaseLLM()
 response = llm.call(
@@ -42,7 +42,7 @@ print(response)
 ### Using Prompt Templates
 
 ```python
-from src import TemplateLLM, prompts
+from ai_interface import TemplateLLM, prompts
 
 prompt_file = prompts.llm_prompts['text2triples']
 template_llm = TemplateLLM(prompt_file)

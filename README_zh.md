@@ -25,7 +25,7 @@ OPENAI_BASE_URL=API地址
 ### 基础LLM调用
 
 ```python
-from src import BaseLLM
+from ai_interface import BaseLLM
 
 llm = BaseLLM()
 response = llm.call(
@@ -38,7 +38,7 @@ print(response)
 ### 使用Prompt模板
 
 ```python
-from src import TemplateLLM, prompts
+from ai_interface import TemplateLLM, prompts
 
 prompt_file = prompts.llm_prompts['text2triples']
 template_llm = TemplateLLM(prompt_file)
