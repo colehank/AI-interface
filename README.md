@@ -1,11 +1,11 @@
 # AI-Interface
-[中文](https://github.com/colehank/AI-interface/README_zh.md)
+[中文](https://github.com/colehank/AI-interface/blob/main/README_zh.md)
 
 ---
 
 ## Overview
 
-This project provides a flexible interface for interacting with OpenAI LLMs (Large Language Models), supporting both direct message calls and prompt template-based calls. It is designed for easy extension and integration with custom prompt templates.
+This project provides a flexible interface for interacting with Aggregation API Platform, supporting both direct message calls and prompt template-based calls. It is designed for easy extension and integration with custom prompt templates.
 
 ## Installation
 

@@ -2,8 +2,7 @@
 
 ## 项目简介
 
-本项目为OpenAI大语言模型（LLM）提供了灵活的接口，支持直接消息调用和基于模板的调用，便于扩展和集成自定义Prompt模板。
-
+该项目为与聚合API平台交互提供了一个灵活的接口，支持直接消息调用和基于模板的提示调用。
 ## 安装方法
 
 ```bash
@@ -59,7 +58,7 @@ print(response)
 llm.print_history()
 template_llm.print_history()
 ```
-
+    
 ## 类说明
 
 ### BaseLLM
