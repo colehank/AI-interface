@@ -1,5 +1,8 @@
-from .base_llm import BaseLLM
-from .templete_llm import TemplateLLM
-from .datasets import manager as prompts
-import os.path as op
+from __future__ import annotations
+
 import os
+import os.path as op
+
+from .base_llm import BaseLLM
+from .datasets import manager as prompts
+from .templete_llm import TemplateLLM

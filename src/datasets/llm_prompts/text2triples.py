@@ -11,7 +11,7 @@ Pay attention to the following requirements:
 """
 
 conditioned_frame = """
-Convert the paragraph into a JSON dict, 
+Convert the paragraph into a JSON dict,
 it has a named entity list and a triple list.
 
 Paragraph:

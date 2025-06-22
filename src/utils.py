@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from wasabi import msg
 
 def print_conversation(msgs):

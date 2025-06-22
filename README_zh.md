@@ -58,7 +58,7 @@ print(response)
 llm.print_history()
 template_llm.print_history()
 ```
-    
+
 ## 类说明
 
 ### BaseLLM
@@ -75,4 +75,4 @@ template_llm.print_history()
 ## Prompt模板机制
 - 模板为Python文件（见`src/datasets/llm_prompts/text2triples.py`）。
 - 每个模板需定义`prompt_template`（消息列表）和`conditioned_frame`（含变量的字符串）。
-- `conditioned_frame`中的变量（如`$passage`、`$named_entities`）需作为参数传递给`TemplateLLM.call()`。 
+- `conditioned_frame`中的变量（如`$passage`、`$named_entities`）需作为参数传递给`TemplateLLM.call()`。
