@@ -151,6 +151,35 @@ class BaseLLM:
         self.call_history.append({'role': 'assistant', 'content': content})
         return content
 
+    def call_embed(
+        self,
+        input: str,
+        model: str,
+    ) -> list[float]:
+        """
+        获取文本的嵌入表示
+
+        Parameters
+        ----------
+        input : str
+            要嵌入的文本输入
+        model : str
+            使用的嵌入模型名称，例如 'text-embedding-3-large'
+
+        Returns
+        -------
+        List[float]
+            嵌入向量列表
+        """
+        response = self.client.embeddings.create(
+            model=model,
+            input=input,
+        )
+        if not response or not response.data:
+            raise ValueError('No embedding data returned from OpenAI API.')
+        return response.data[0].embedding
+
+
     def _validate_json_request(self, messages: list[dict[str, str]]) -> None:
         """
         验证 JSON 请求是否包含相关指令
