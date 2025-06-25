@@ -66,6 +66,7 @@ class TemplateLLM(BaseLLM):
         self.template_obj = Template(template_module.conditioned_frame)
 
         variables = re.findall(r'\$(\w+)', self.conditioned_frame)
+        variables = list(set(variables))  # 去重
         if not variables:
             raise ValueError(
                 f'No variables found in conditioned_frame: \n{self.conditioned_frame}',

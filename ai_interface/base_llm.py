@@ -4,10 +4,6 @@ import json
 import os
 import re
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Union
 
 from dotenv import load_dotenv
 from openai import OpenAI
