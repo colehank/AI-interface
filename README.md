@@ -1,13 +1,9 @@
-# AI-Interface
-[中文](https://github.com/colehank/AI-interface/blob/main/README_zh.md)
+# 中文说明
 
----
+## 项目简介
 
-## Overview
-
-This project provides a flexible interface for interacting with Aggregation API Platform, supporting both direct message calls and prompt template-based calls. It is designed for easy extension and integration with custom prompt templates.
-
-## Installation
+该项目为与聚合API平台交互提供了一个灵活的接口，支持直接消息调用和基于模板的提示调用。
+## 安装方法
 
 ```bash
 git clone https://github.com/colehank/AI-interface.git
@@ -15,68 +11,15 @@ cd AI-interface
 pip install -r requirements.txt
 ```
 
-## Environment Variables
+## 环境变量
 
-Create a `.env` file in the project root (see `.env_example`):
+在项目根目录下创建`.env`文件（参考`.env_example`）：
 
 ```
-OPENAI_API_KEY=your api key
-OPENAI_BASE_URL=api endpoint
+OPENAI_API_KEY=你的API密钥
+OPENAI_BASE_URL=API地址
 ```
 
-## Usage Example
-
-### Basic LLM Call
-
-```python
-from ai_interface import BaseLLM
-
-llm = BaseLLM()
-response = llm.call(
-    messages=[{"role": "user", "content": "Who is the president of the United States?"}],
-    response_format='text',
-)
-print(response)
-```
-
-### Using Prompt Templates
-
-```python
-from ai_interface import TemplateLLM, prompts
-
-prompt_file = prompts.llm_prompts['text2triples']
-template_llm = TemplateLLM(prompt_file)
-
-response = template_llm.call(
-    passage="XiaoMing is a Chinese student from Beijing Normal University",
-    named_entities='["Chinese", "Beijing Normal University", "XiaoMing"]',
-    model='gpt-4o',
-    response_format='json',
-)
-print(response)
-```
-
-### Print Conversation History
-
-```python
-llm.print_history()
-template_llm.print_history()
-```
-
-## Class Overview
-
-### BaseLLM
-- Directly call OpenAI LLMs with message lists.
-- Maintains call history.
-- Supports text and JSON response formats.
-
-### TemplateLLM
-- Inherits from BaseLLM.
-- Loads prompt templates from Python files.
-- Fills variables in prompt templates for structured LLM calls.
-- Example template variables: `passage`, `named_entities`.
-
-## Prompt Template Mechanism
-- Templates are Python files (see `src/datasets/llm_prompts/text2triples.py`).
-- Each template must define `prompt_template` (list of messages) and `conditioned_frame` (string with variables).
-- Variables in `conditioned_frame` (e.g., `$passage`, `$named_entities`) must be provided as arguments to `TemplateLLM.call()`.
+## 使用示例
+LLM见[example_llm.py](https://github.com/colehank/AI-interface/blob/main/example_llm.ipynb),
+LVM见[example_lvm.py](https://github.com/colehank/AI-interface/blob/main/example_lvm.ipynb)
