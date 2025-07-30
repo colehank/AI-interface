@@ -215,7 +215,7 @@ if __name__ == '__main__':
         ],
     )
     #%%
-    character_ref = Image.open('/Users/zgh/Desktop/workingdir/AI-interface/ai_interface/datasets/lvm_prompts/character_ref.png')
+    character_ref = Image.open('/Users/zgh/Desktop/workingdir/AI-interface/lmitf/datasets/lvm_prompts/character_ref.png')
     a_lvm = AgentLVM()
     res = a_lvm.edit(
         image=character_ref,
