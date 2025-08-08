@@ -28,5 +28,5 @@ OPENAI_BASE_URL=API地址
 ```
 
 ## 使用示例
-LLM见[example_llm.ipynb[https://github.com/colehank/AI-interface/blob/main/example_llm.ipynb),
-LVM见[example_lvm.ipynb[https://github.com/colehank/AI-interface/blob/main/example_lvm.ipynb)
+LLM见[example_llm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_llm.ipynb),
+LVM见[example_lvm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_lvm.ipynb)
