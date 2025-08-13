@@ -256,15 +256,15 @@ class DMXPricing:
             df.sort_values(["模型厂商", "模型名称"], inplace=True, kind="mergesort")
             df.reset_index(drop=True, inplace=True)
         return df
-    
+
     def fetch_balance(self, api_key=None, user_id=None):
         """
         Fetch DMX balance using API key and user ID.
-        
+
         Args:
             api_key (str): API key, defaults to OPENAI_API_KEY environment variable
             user_id (str): User ID, defaults to '3804'
-        
+
         Returns:
             dict: Balance data from API response
         """
@@ -272,14 +272,14 @@ class DMXPricing:
             api_key = os.getenv("OPENAI_API_KEY")
         if user_id is None:
             user_id = '3804'
-        
+
         url = f"https://www.dmxapi.cn/api/token/key/{api_key}"
-        
+
         headers = {
             "Accept": "application/json",
             "Rix-Api-User": user_id,
         }
-        
+
         response = requests.request("GET", url, headers=headers)
         response_data = response.json()['data']
         remaining_balance = response_data['remain_quota'] / 500000
@@ -313,5 +313,5 @@ def fetch_model_from_supplier(
 if __name__ == "__main__":
     url = "https://www.dmxapi.cn/pricing"
     client = DMXPricing(url)
-    
-    
+
+
