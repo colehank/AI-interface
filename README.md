@@ -29,4 +29,5 @@ OPENAI_BASE_URL=API地址
 
 ## 使用示例
 LLM见[example_llm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_llm.ipynb),
-LVM见[example_lvm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_lvm.ipynb)
+LVM见[example_lvm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_lvm.ipynb),
+模型问价及api key余额查询见[example_price.ipynb](https://github.com/colehank/AI-interface/blob/main/example_price.ipynb)
