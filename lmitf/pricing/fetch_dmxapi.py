@@ -8,7 +8,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 
-
+load_dotenv()
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
 # 常见 emoji & pictograph 范围（尽量覆盖，防止说明里花里胡哨的符号）
 _EMOJI_RE = re.compile(
@@ -270,6 +270,9 @@ class DMXPricing:
         """
         if api_key is None:
             api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            print("API key is required. Please set the OPENAI_API_KEY environment variable.")
+            return {}
         if user_id is None:
             user_id = '3804'
 
@@ -281,7 +284,12 @@ class DMXPricing:
         }
 
         response = requests.request("GET", url, headers=headers)
-        response_data = response.json()['data']
+        try:
+            response_data = response.json()['data']
+        except (json.JSONDecodeError, KeyError):
+            print("Error fetching balance data. Please check your API key and user ID.")
+            print("Response content:", response.text)
+            return {}
         remaining_balance = response_data['remain_quota'] / 500000
         print(f"API Key User {response_data['name']} remaining {remaining_balance}¥")
         return remaining_balance
