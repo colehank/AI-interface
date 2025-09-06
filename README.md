@@ -17,6 +17,8 @@ LMITF (Large Model Interface) 为与大型语言模型和视觉模型交互提�
 - 📖 **完整文档** - 详尽的使用指南和API参考
 
 ## 📚 文档
+**‼️（文档由claude code生成，不太准确，无误版请参考下方的 `## 📖 示例`）**
+
 
 **完整文档**: [https://colehank.github.io/AI-interface/](https://colehank.github.io/AI-interface/)
 
@@ -38,30 +40,8 @@ pip install lmitf
 ```python
 from lmitf import BaseLLM
 
-# 初始化客户端
 llm = BaseLLM()
-
-# 简单文本生成
 response = llm.call("你好，请介绍一下人工智能")
-print(response)
-
-# JSON模式获取结构化输出
-data = llm.call_json("生成一个用户档案，包含姓名、年龄和职业")
-print(data)
-```
-
-### 视觉模型
-
-```python  
-from lmitf import BaseLVM
-
-lvm = BaseLVM()
-
-# 图像分析
-response = lvm.call(
-    messages="描述这张图片的内容",
-    image_path="image.jpg"
-)
 print(response)
 ```
 
@@ -83,7 +63,7 @@ OPENAI_API_KEY=你的API密钥
 OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
-## 📖 更多示例
+## 📖 示例
 
 - **LLM使用**: [example_llm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_llm.ipynb)
 - **视觉模型**: [example_lvm.ipynb](https://github.com/colehank/AI-interface/blob/main/example_lvm.ipynb)  
