@@ -1,4 +1,13 @@
 from __future__ import annotations
+import base64
+
+def _load_image_as_base64(image_path: str) -> str:
+
+    with open(image_path, 'rb') as img_file:
+        b64_str = base64.b64encode(img_file.read()).decode('utf-8')
+    return b64_str
+
+
 
 sys_prompt = """
 You are a helpful AI assistant that generates images based on character references and scene descriptions.

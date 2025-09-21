@@ -25,63 +25,49 @@ The `BaseLLM` class provides a simplified interface for interacting with OpenAI'
 
 ## Key Features
 
-- **Automatic Configuration**: Uses environment variables for API key and base URL
-- **Flexible Input**: Accepts both string messages and structured conversation arrays
-- **JSON Mode**: Built-in support for structured JSON responses
-- **History Tracking**: Maintains a history of all API calls
-- **Streaming Support**: Real-time response streaming
-- **Error Handling**: Comprehensive error handling and logging
+- **Simple API Interface**: Easy-to-use wrapper for OpenAI-compatible APIs
+- **Message Support**: Accepts both string messages and structured conversation arrays
+- **Conversation History**: Tracks and displays conversation history
+- **Embedding Support**: Generate text embeddings with `call_embed` method
+- **Template Integration**: Works with template-based prompts
 
 ## Usage Examples
 
-### Basic Text Generation
+### Single Question Answering
 
 ```python
 from lmitf import BaseLLM
 
 llm = BaseLLM()
-response = llm.call("What is machine learning?")
-print(response)
-```
-
-### JSON Mode
-
-```python
-# Get structured output
-profile = llm.call_json(
-    "Generate a user profile with name, age, and occupation",
-    model="gpt-4"
+response = llm.call(
+    messages=[{'role': 'user', 'content': 'Who is the president of the United States?'}],
+    response_format='text',
 )
-print(profile)  # Returns a dictionary
+llm.print_history()
 ```
 
-### Conversation with Context
+### Multi-turn Conversation
 
 ```python
-messages = [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "What's the capital of France?"},
-    {"role": "assistant", "content": "The capital of France is Paris."},
-    {"role": "user", "content": "What's its population?"}
-]
-
-response = llm.call(messages, model="gpt-4")
-print(response)
-```
-
-### Streaming Responses
-
-```python
-# Stream responses for real-time output
-response_stream = llm.call(
-    "Write a short story about AI",
-    model="gpt-4",
-    stream=True
+# Continue conversation using call_history
+q1 = "Where is the president from?"
+res = llm.call(
+    messages=llm.call_history + [{'role': 'user', 'content': q1}],
+    response_format='text',
 )
+llm.print_history()
+```
 
-for chunk in response_stream:
-    if chunk.choices[0].delta.content:
-        print(chunk.choices[0].delta.content, end="", flush=True)
+### Text Embeddings
+
+```python
+# Generate embeddings for text
+text = "hello world"
+embedding = llm.call_embed(
+    input=text,
+    model="text-embedding-3-large"
+)
+print(f"embedding shape: {embedding.shape}")
 ```
 
 ## Configuration
@@ -113,26 +99,28 @@ llm = BaseLLM(
 Main method for generating text responses.
 
 **Parameters:**
-- `messages` (str | list): Input message(s)
+- `messages` (list): List of message dictionaries with 'role' and 'content'
+- `response_format` (str): Response format (default: 'text')
 - `model` (str): Model to use (default: "gpt-4o")
-- `stream` (bool): Enable streaming responses
-- `**kwargs`: Additional OpenAI API parameters
+- `**kwargs`: Additional OpenAI API parameters like `temperature`
 
 **Returns:**
-- `str`: Generated response text (non-streaming)
-- `Iterator`: Streaming response chunks (streaming)
+- `str`: Generated response text
 
-### call_json()
+### call_embed()
 
-Generate structured JSON responses.
+Generate text embeddings.
 
 **Parameters:**
-- `messages` (str | list): Input message(s)  
-- `model` (str): Model to use (default: "gpt-4o")
-- `**kwargs`: Additional OpenAI API parameters
+- `input` (str): Text to embed
+- `model` (str): Embedding model to use (e.g., "text-embedding-3-large")
 
 **Returns:**
-- `dict`: Parsed JSON response
+- `numpy.ndarray`: Text embedding vector
+
+### print_history()
+
+Display conversation history with formatted output.
 
 ## Error Handling
 

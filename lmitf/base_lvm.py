@@ -202,10 +202,10 @@ class AgentLVM():
 #%%
 if __name__ == '__main__':
     vlm = BaseLVM()
-    res = vlm.create('A beautiful landscape with mountains and a river')
+    res = vlm.create('A beautiful asian woman in a red dress standing in a field of flowers, digital art')
     #%%
     vlm = BaseLVM()
-    res = vlm.edit(res, 'Add a rainbow in the sky')
+    res = vlm.edit(res, 'this woaman become a cyborg with neon lights, cyberpunk style')
     #%%
     a_lvm = AgentLVM()
     res = a_lvm.create(

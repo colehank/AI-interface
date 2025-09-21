@@ -1,0 +1,1 @@
+from .cons_character import ConsCharacter
