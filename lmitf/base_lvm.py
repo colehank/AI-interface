@@ -69,6 +69,7 @@ class BaseLVM:
         mask: Image.Image | None = None,
         model: str = 'gpt-image-1',
         size: str = '1024x1024',
+        input_fidelity:str = 'low',
     ) -> Image.Image:
         """
         Edit an existing image with a prompt and optional mask.
