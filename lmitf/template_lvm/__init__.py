@@ -1,1 +1,1 @@
-from .cons_character import ConsCharacter
+from .storyboard import StoryBoard
