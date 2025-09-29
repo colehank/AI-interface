@@ -20,7 +20,7 @@ def print_conversation(msgs):
         print(turn['content'])
 
 def buf_img(
-    image: "Image.Image"
+    image: Image.Image
     ) -> bytes:
     import io
     img_buf = io.BytesIO()
@@ -30,7 +30,7 @@ def buf_img(
 
 def open_image(
     b64_str: str
-    ) -> "Image.Image":
+    ) -> Image.Image:
     import base64
     import io
     from PIL import Image
@@ -41,7 +41,7 @@ def open_image(
     
 def res_to_image(
     response: dict
-    ) -> "Image.Image":
+    ) -> Image.Image:
     b64_str = response.data[0].b64_json
     image = open_image(b64_str)
     return image
