@@ -68,8 +68,10 @@ class StoryBoard:
     def create(
         self,
         story_prompts:list,
-        model='gpt-image-1',
-        verbose=True
+        model:str='gpt-image-1',
+        verbose:bool=True,
+        verbose_desc:str="Visualizing...",
+        verbose_leave:bool=False
         )-> list[Image.Image]:
         """Generate a sequence of images telling a story in a tram."""        
         results = []
@@ -78,9 +80,10 @@ class StoryBoard:
         
         for i, prompt in tqdm(
             enumerate(story_prompts), 
-            desc="Generating story images", 
+            desc=verbose_desc, 
             disable= not verbose,
-            total=len(story_prompts)
+            total=len(story_prompts),
+            leave=verbose_leave
             ):
             # First prompt doesn't need previous context
             current_prompt = prefix if i > 0 else f"这是角色{self.cha_name}的参考图。\n"
