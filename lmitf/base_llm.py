@@ -48,7 +48,7 @@ class BaseLLM:
         self,
         messages: str | list[dict[str, str]],
         model: str = 'gpt-4o',
-        response_format: str = 'text',
+        response_format: str = 'json',
         temperature: float | None = None,
         top_p: float | None = None,
         frequency_penalty: float | None = None,
