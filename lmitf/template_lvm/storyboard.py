@@ -58,13 +58,12 @@ class StoryBoard:
         if not (ref_img or description):
             raise ValueError("Either ref_img or description must be provided.")
         if not ref_img:
-            self._make_ref_img(description)
-        self.description = description
+            self.description = description
+            ref_img = self._make_ref_img(description)
         self.ref_img = ref_img
 
     def _make_ref_img(self, description):
-        ref_img = self.lvm.create(prompt=description) 
-        self.ref_img = ref_img
+        return self.lvm.create(prompt=description) 
 
     def create(
         self,
@@ -98,8 +97,6 @@ class StoryBoard:
     
     def _repr_html_(self):
         html = f"<h3>{self.cha_name}</h3>"
-        if self.description:
-            html += f"<p>{self.description}</p>"
         if self.ref_img:
             buffer = io.BytesIO()
             self.ref_img.save(buffer, format='PNG')
