@@ -26,7 +26,7 @@ class TemplateLLM(BaseLLM):
         assert template_path.endswith('.py'), 'Template file must be a Python file (.py)'
         self._load_template(template_path)
         self.template_path = template_path
-        msg.text(f'Template loaded from \n{template_path}')
+        # msg.text(f'Template loaded from \n{template_path}')
 
     def _load_template(self, template_path: str):
         """

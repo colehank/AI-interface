@@ -27,6 +27,7 @@ dependencies = [
     "python-dotenv>=1.0",
     "wasabi>=1.1",
     "pillow>=9.0",
+    "python-docx>=1.2.0",
 ]
 
 [project.urls]
