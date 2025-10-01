@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from PIL import Image
-from .utils import buf_img, res_to_image
+from .utils import buf_image, res_to_image
 load_dotenv()
 
 class BaseLVM:
@@ -72,7 +72,7 @@ class BaseLVM:
         """
         # Prepare image file
         imgs = [
-            buf_img(img) if isinstance(img, Image.Image) else img
+            buf_image(img) if isinstance(img, Image.Image) else img
             for img in (image if isinstance(image, list) else [image])
         ]
 

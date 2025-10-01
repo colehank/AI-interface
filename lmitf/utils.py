@@ -19,7 +19,7 @@ def print_conversation(msgs):
         msg.divider(icon)
         print(turn['content'])
 
-def buf_img(
+def buf_image(
     image: Image.Image
     ) -> bytes:
     import io
