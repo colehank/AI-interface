@@ -57,10 +57,8 @@ class StoryBoard:
         self.lvm = BaseLVM()
         if not (ref_img or description):
             raise ValueError("Either ref_img or description must be provided.")
-        if not ref_img:
-            self.description = description
-            ref_img = self._make_ref_img(description)
         self.ref_img = ref_img
+        self.description = description
 
     def _make_ref_img(self, description):
         return self.lvm.create(prompt=description) 
@@ -70,20 +68,21 @@ class StoryBoard:
         story_prompts:list,
         model:str='gpt-image-1',
         verbose:bool=True,
-        verbose_desc:str="Visualizing...",
-        verbose_leave:bool=False
-        )-> list[Image.Image]:
-        """Generate a sequence of images telling a story in a tram."""        
+        **kwargs
+        )-> Image.Image:
+        """Generate a sequence of images telling a story in a tram."""
+        if not self.ref_img:
+            self.ref_img = self._make_ref_img(self.description)
         results = []
         context = [self.ref_img]
         prefix = f"""这是角色{self.cha_name}的参考图以及前序事件。注意保持场景与角色的一致性\n"""
         
         for i, prompt in tqdm(
             enumerate(story_prompts), 
-            desc=verbose_desc, 
+            desc=kwargs.get('desc', 'T2I'),
             disable= not verbose,
             total=len(story_prompts),
-            leave=verbose_leave
+            leave=kwargs.get('leave', False)
             ):
             # First prompt doesn't need previous context
             current_prompt = prefix if i > 0 else f"这是角色{self.cha_name}的参考图。\n"
