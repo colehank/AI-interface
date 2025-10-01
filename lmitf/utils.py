@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from PIL import Image
 
 def print_conversation(msgs):
     """
@@ -38,7 +38,18 @@ def open_image(
     img_data = base64.b64decode(b64_str)
     image = Image.open(io.BytesIO(img_data))
     return image
-    
+
+def encode_image(
+    image: Image.Image
+    ) -> str:
+    import base64
+    from io import BytesIO
+
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    return img_str
+
 def res_to_image(
     response: dict
     ) -> Image.Image:
