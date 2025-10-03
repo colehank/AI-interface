@@ -73,27 +73,50 @@ class StoryBoard:
         """Generate a sequence of images telling a story in a tram."""
         
         results = []
-        context = [self.ref_img]
+       
         prefix = f"""这是角色{self.cha_name}的参考图以及前序事件。注意保持场景与角色的一致性\n"""
 
-       
-        for i, prompt in tqdm(
-            enumerate(story_prompts), 
+        # If no ref image, include an extra tqdm step for generating it
+        missing_ref = not self.ref_img
+        total_steps = len(story_prompts) + (1 if missing_ref else 0)
+
+        # Initialize context depending on whether ref image exists
+        context = [self.ref_img] if self.ref_img else []
+
+        pbar = tqdm(
+            total=total_steps,
             desc=kwargs.get('desc', 'T2I'),
-            disable= not verbose,
-            total=len(story_prompts),
-            leave=kwargs.get('leave', False)
-            ):
-            # First prompt doesn't need previous context
-            current_prompt = prefix if i > 0 else f"这是角色{self.cha_name}的参考图。\n"
-            current_prompt += prompt
-            
-            # Generate the image
-            img = self.lvm.edit(context, current_prompt, model=model)
-            results.append(img)
-            
-            # Add to context for next iteration
-            context.append(img)
+            disable=not verbose,
+            leave=kwargs.get('leave', False),
+        )
+        try:
+            # Step 1: create reference image if needed
+            if missing_ref:
+                pbar.set_postfix_str('Drawing ref-character')
+                self.ref_img = self._make_ref_img(self.description)
+                context = [self.ref_img]
+                pbar.update(1)
+
+            # Following steps: iterate through story prompts
+            for prompt_idx, prompt in enumerate(story_prompts):
+                # Clear or override postfix for normal steps
+                pbar.set_postfix_str(f'Drawing panels')
+
+                # First prompt doesn't need previous context
+                current_prompt = (
+                    prefix if prompt_idx > 0 else f"这是角色{self.cha_name}的参考图。\n"
+                )
+                current_prompt += prompt
+
+                # Generate the image
+                img = self.lvm.edit(context, current_prompt, model=model)
+                results.append(img)
+
+                # Add to context for next iteration and advance progress
+                context.append(img)
+                pbar.update(1)
+        finally:
+            pbar.close()
         
         return make_sequence(results), results
     
