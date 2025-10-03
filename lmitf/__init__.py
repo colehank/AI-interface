@@ -11,5 +11,5 @@ from .templete_llm import TemplateLLM
 from .utils import print_conversation as print_turn
 from .agent_llm import AgentLLM
 
-__version__ = '0.1.21'
+__version__ = '0.1.22'
 __description__ = 'Large Model Interface - A flexible interface for interacting with large language models and vision models.'
