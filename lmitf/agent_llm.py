@@ -6,7 +6,8 @@ import io
 import json
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from collections.abc import Iterable
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -27,10 +28,10 @@ class Part:
       或（可选 detail） {"type":"input_image","image_url":{"url": "...", "detail": "low|high"}}
     """
     type: Literal["input_text", "input_image", "output_text"]
-    text: Optional[str] = None
-    image_url: Optional[Union[str, Dict[str, Any]]] = None
+    text: str | None = None
+    image_url: str | dict[str, Any] | None = None
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         if self.type == "input_text":
             if not isinstance(self.text, str):
                 raise ValueError("input_text part requires 'text' (str).")
@@ -50,9 +51,9 @@ class Part:
 @dataclass
 class Message:
     role: Role
-    content: List[Part]
+    content: list[Part]
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "role": self.role,
             "content": [p.to_payload() for p in self.content],
@@ -86,7 +87,7 @@ def _pil_to_data_uri(
     max_side: int = 2048,
     prefer_webp: bool = True,
     webp_quality: int = 85,
-) -> Tuple[str, int]:
+) -> tuple[str, int]:
     """
     将 PIL.Image.Image 转 Data URI（base64）
     - 约束：将最长边压到 max_side（控制 payload 体积，降低延迟/费用）
@@ -143,7 +144,7 @@ def _make_image_part(
     if not isinstance(image, Image.Image):
         raise TypeError("Image content must be a PIL.Image.Image instance.")
     data_uri, _ = _pil_to_data_uri(image, max_side=max_side, prefer_webp=prefer_webp)
-    image_url: Union[str, Dict[str, Any]]
+    image_url: str | dict[str, Any]
     if detail == "auto":
         image_url = data_uri
     else:
@@ -157,7 +158,7 @@ def _image_parts_from_value(
     detail: Literal["auto", "low", "high"] = "auto",
     prefer_webp: bool = True,
     max_side: int = 2048,
-) -> List[Part]:
+) -> list[Part]:
     if isinstance(image_value, Image.Image):
         return [_make_image_part(image_value, detail=detail, prefer_webp=prefer_webp, max_side=max_side)]
     if isinstance(image_value, dict):
@@ -174,7 +175,7 @@ def _image_parts_from_value(
     raise TypeError("Unsupported image payload; expected PIL.Image.Image or configuration dict containing 'image'.")
 
 
-def _parts_from_value(role: Role, value: Any) -> List[Part]:
+def _parts_from_value(role: Role, value: Any) -> list[Part]:
     if value is None:
         return []
     if isinstance(value, Part):
@@ -188,7 +189,7 @@ def _parts_from_value(role: Role, value: Any) -> List[Part]:
     if isinstance(value, Image.Image):
         return _image_parts_from_value(value)
     if isinstance(value, (list, tuple)):
-        parts: List[Part] = []
+        parts: list[Part] = []
         for item in value:
             parts.extend(_parts_from_value(role, item))
         return parts
@@ -210,7 +211,7 @@ def _parts_from_value(role: Role, value: Any) -> List[Part]:
                 if image_url is None:
                     raise ValueError("input_image part requires 'image_url'.")
                 return [Part(type="input_image", image_url=image_url)]
-        parts: List[Part] = []
+        parts: list[Part] = []
         if "text" in value:
             parts.extend(_parts_from_value(role, value["text"]))
         image_kwargs = {
@@ -234,10 +235,10 @@ def _parts_from_value(role: Role, value: Any) -> List[Part]:
     raise TypeError(f"Unsupported message payload type for role '{role}': {type(value)!r}")
 
 
-def _build_messages_from_dict(message: Dict[str, Any]) -> List[Message]:
+def _build_messages_from_dict(message: dict[str, Any]) -> list[Message]:
     if not isinstance(message, dict):
         raise TypeError("message must be a dict mapping roles to payloads.")
-    messages: List[Message] = []
+    messages: list[Message] = []
     for role_key, value in message.items():
         if role_key not in {"system", "user", "assistant"}:
             raise ValueError(f"Unsupported role '{role_key}'. Expected 'system', 'user', or 'assistant'.")
@@ -256,11 +257,11 @@ class AgentLLM:
     - 支持文本/严格 JSON 输出
     - 维护对话历史（可选）
     """
-    api_key: Optional[str] = None
-    base_url: Optional[str] = None
+    api_key: str | None = None
+    base_url: str | None = None
     model: str = "gpt-4.1-mini"  # 你可以换为适配视觉的最新模型，如 gpt-4o-mini / gpt-4.1
     client: OpenAI = field(init=False)
-    history: List[Message] = field(default_factory=list)
+    history: list[Message] = field(default_factory=list)
 
     def __post_init__(self):
         self.client = OpenAI(
@@ -307,15 +308,15 @@ class AgentLLM:
 
     def call(
         self,
-        message: Dict[str, Any],
+        message: dict[str, Any],
         *,
         response_format: JsonMode = "text",
-        max_output_tokens: Optional[int] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        seed: Optional[int] = None,
-        json_schema: Optional[Dict[str, Any]] = None,
-    ) -> Union[str, Dict[str, Any]]:
+        max_output_tokens: int | None = None,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        seed: int | None = None,
+        json_schema: dict[str, Any] | None = None,
+    ) -> str | dict[str, Any]:
         """
         执行一次对话，仅基于传入的 message 字典构建输入：
         - message: {"system": ..., "user": ..., "assistant": ...}
@@ -335,18 +336,18 @@ class AgentLLM:
 
     def _call_with_messages(
         self,
-        messages: List[Message],
+        messages: list[Message],
         *,
         response_format: JsonMode = "text",
-        max_output_tokens: Optional[int] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        seed: Optional[int] = None,
-        json_schema: Optional[Dict[str, Any]] = None,
-    ) -> Union[str, Dict[str, Any]]:
-        inputs: List[Dict[str, Any]] = [m.to_payload() for m in messages]
+        max_output_tokens: int | None = None,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        seed: int | None = None,
+        json_schema: dict[str, Any] | None = None,
+    ) -> str | dict[str, Any]:
+        inputs: list[dict[str, Any]] = [m.to_payload() for m in messages]
 
-        params: Dict[str, Any] = {
+        params: dict[str, Any] = {
             "model": self.model,
             "input": inputs,
         }
@@ -417,11 +418,11 @@ class AgentLLM:
         *,
         response_format: JsonMode = "text",
         **kwargs: Any,
-    ) -> Union[str, Dict[str, Any]]:
+    ) -> str | dict[str, Any]:
         """
         快速一次性调用：只发一条用户文本，不写入历史。
         """
-        message: Dict[str, Any] = {"user": prompt}
+        message: dict[str, Any] = {"user": prompt}
         return self.call(
             message,
             response_format=response_format,
@@ -430,12 +431,12 @@ class AgentLLM:
 
     def chat(
         self,
-        message: Dict[str, Any],
+        message: dict[str, Any],
         *,
         response_format: JsonMode = "text",
         persist_history: bool = True,
         **kwargs: Any,
-    ) -> Union[str, Dict[str, Any]]:
+    ) -> str | dict[str, Any]:
         """
         基于 message 执行一次对话，可选择是否写入历史。
         """

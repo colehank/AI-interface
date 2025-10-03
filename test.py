@@ -6,7 +6,8 @@ import io
 import json
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from collections.abc import Iterable
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -27,10 +28,10 @@ class Part:
       或（可选 detail） {"type":"input_image","image_url":{"url": "...", "detail": "low|high"}}
     """
     type: Literal["input_text", "input_image"]
-    text: Optional[str] = None
-    image_url: Optional[Union[str, Dict[str, Any]]] = None
+    text: str | None = None
+    image_url: str | dict[str, Any] | None = None
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         if self.type == "input_text":
             if not isinstance(self.text, str):
                 raise ValueError("input_text part requires 'text' (str).")
@@ -50,9 +51,9 @@ class Part:
 @dataclass
 class Message:
     role: Role
-    content: List[Part]
+    content: list[Part]
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "role": self.role,
             "content": [p.to_payload() for p in self.content],
@@ -86,7 +87,7 @@ def _pil_to_data_uri(
     max_side: int = 2048,
     prefer_webp: bool = True,
     webp_quality: int = 85,
-) -> Tuple[str, int]:
+) -> tuple[str, int]:
     """
     将 PIL.Image.Image 转 Data URI（base64）
     - 约束：将最长边压到 max_side（控制 payload 体积，降低延迟/费用）
@@ -132,11 +133,11 @@ class AgentLLM:
     - 支持文本/严格 JSON 输出
     - 维护对话历史（可选）
     """
-    api_key: Optional[str] = None
-    base_url: Optional[str] = None
+    api_key: str | None = None
+    base_url: str | None = None
     model: str = "gpt-5-nano"
     client: OpenAI = field(init=False)
-    history: List[Message] = field(default_factory=list)
+    history: list[Message] = field(default_factory=list)
 
     def __post_init__(self):
         self.client = OpenAI(
@@ -177,7 +178,7 @@ class AgentLLM:
         """
         data_uri, _ = _pil_to_data_uri(image, max_side=max_side, prefer_webp=prefer_webp)
 
-        image_url: Union[str, Dict[str, Any]]
+        image_url: str | dict[str, Any]
         if detail == "auto":
             image_url = data_uri
         else:
@@ -194,15 +195,15 @@ class AgentLLM:
         self,
         *,
         response_format: JsonMode = "text",
-        max_output_tokens: Optional[int] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        seed: Optional[int] = None,
-        json_schema: Optional[Dict[str, Any]] = None,
+        max_output_tokens: int | None = None,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        seed: int | None = None,
+        json_schema: dict[str, Any] | None = None,
         # 兼容一次性快速调用：传入额外的当前用户文本/图片（不会写入历史）
-        transient_user_text: Optional[str] = None,
-        transient_user_images: Optional[List[Image.Image]] = None,
-    ) -> Union[str, Dict[str, Any]]:
+        transient_user_text: str | None = None,
+        transient_user_images: list[Image.Image] | None = None,
+    ) -> str | dict[str, Any]:
         """
         执行一次对话：
         - response_format="text"：返回字符串
@@ -212,10 +213,10 @@ class AgentLLM:
             raise ValueError("No input provided. Add messages or use transient_user_* arguments.")
 
         # 构造 input（历史 + 本次临时输入）
-        inputs: List[Dict[str, Any]] = [m.to_payload() for m in self.history]
+        inputs: list[dict[str, Any]] = [m.to_payload() for m in self.history]
 
         if transient_user_text or transient_user_images:
-            parts: List[Part] = []
+            parts: list[Part] = []
             if transient_user_text:
                 parts.append(Part(type="input_text", text=transient_user_text))
             for img in transient_user_images or []:
@@ -224,7 +225,7 @@ class AgentLLM:
             inputs.append(Message(role="user", content=parts).to_payload())
 
         # 组装请求参数
-        params: Dict[str, Any] = {
+        params: dict[str, Any] = {
             "model": self.model,
             "input": inputs,
         }
@@ -298,7 +299,7 @@ class AgentLLM:
         *,
         response_format: JsonMode = "text",
         **kwargs: Any,
-    ) -> Union[str, Dict[str, Any]]:
+    ) -> str | dict[str, Any]:
         """
         快速一次性调用：只发一条用户文本，不写入历史。
         """
@@ -310,13 +311,13 @@ class AgentLLM:
 
     def chat(
         self,
-        user_text: Optional[str] = None,
-        user_images: Optional[List[Image.Image]] = None,
-        assistant_text: Optional[str] = None,
+        user_text: str | None = None,
+        user_images: list[Image.Image] | None = None,
+        assistant_text: str | None = None,
         *,
         response_format: JsonMode = "text",
         **kwargs: Any,
-    ) -> Union[str, Dict[str, Any]]:
+    ) -> str | dict[str, Any]:
         """
         将传入内容**写入历史**并调用。
         """
