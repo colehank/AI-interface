@@ -341,7 +341,7 @@ if __name__ == "__main__":
     agent.add_system_prompt("你是一个视觉识别专家。")
     agent.add_user_image(img)
 # %%
-    res = agent.call()
+    res = agent.call(response_format='json')
     agent.add_assistant_text(res)
     agent.chat(
         user_text="重复一下你刚刚的回答",

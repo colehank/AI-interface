@@ -1,3 +1,4 @@
+# %%
 import json
 import re
 import typing as t
@@ -96,11 +97,18 @@ class DMXPricing:
                 "tags": tags_str,
                 "illustrate": illustrate,
             }
-
+        
+        try:
+            self._init_pricing()
+        except Exception as e:
+            print(e)
+            Warning(f"初始化 DMXPricing 失败：{e}")
+    
+    def _init_pricing(self):
         # 分组与价格：一般只有 'default'
         model_group = self._raw.get("model_group") or {}
         if not model_group:
-            raise ValueError("未找到 model_group 数据")
+            raise ValueError("未找到 model_group 数据, 无法初始化价格表")
         # 取第一个分组名称
         self.group_name = next(iter(model_group.keys()))
         group_obj = model_group[self.group_name]
@@ -323,3 +331,5 @@ if __name__ == "__main__":
     client = DMXPricing(url)
 
 
+
+#%%

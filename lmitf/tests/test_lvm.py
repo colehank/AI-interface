@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 
-import pytest
+# import pytest
 from openai import OpenAI
 from PIL import Image
 
